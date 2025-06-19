@@ -1,21 +1,9 @@
 #include "linkedList.h"
 
-/*
-Initialize linked list, set first node of list to null. 
-
-@param list - pointer to list to initialize.
-
-@return LinkedListError with exit code.
-*/
 LinkedListError initList(LinkedList* list){
     list->head = NULL;
 }
 
-/*
-Free given list.
-
-@param list - list to free. 
-*/
 void freeList(LinkedList* list){
     Node* head = list->head;
     Node* tmp;
@@ -41,7 +29,7 @@ LinkedListError initNode(Node* node, int value){
     node = (Node*) calloc(1, sizeof(Node*));
 
     if (!node){
-        return INIT_NODE_ERROR;
+        return ALLOCATION_ERROR;
     }
 
     node->value = value;
@@ -62,36 +50,20 @@ LinkedListError addFirstNode(LinkedList* list, int value){
     return initNode(list->head, value);
 }
 
-/*
-Add an element with the given value to the given list. 
-
-@param list - the given list to append to.
-@param value - the value to append.
-
-@return LinkedListError with exit code.
-*/
 LinkedListError append(LinkedList* list, int value){
-    Node* tmp = list->head;
+    Node* iterator = list->head;
 
-    if (tmp == NULL){
+    if (iterator == NULL){
         return addFirstNode(list, value);
     }
 
-    while (tmp->next != NULL){
-        tmp = tmp->next;
+    while (iterator->next != NULL){
+        iterator = iterator->next;
     }
 
-    return initNode(tmp->next, value);
+    return initNode(iterator->next, value);
 }
 
-/* 
-Add element with the given value to the beginning of the given list.
-
-@param list - list to prepend to.
-@param value - value of the element to prepend.
-
-@return LinkedListError with exit code.
-*/
 LinkedListError prepend(LinkedList* list, int value){
     Node* tmp = list->head;
 
@@ -111,23 +83,149 @@ LinkedListError prepend(LinkedList* list, int value){
 }
 
 /*
-Insert element with the given value in the given index of the given list.
+Points the given pointer to the element at the given index of the given list.
 
-@param list - list to insert in.
-@param index - index to insert at.
-@param value - value of element to insert.
+@param list - given list.
+@param index - given index.
+@param pointer - given pointer.
 
 @return LinkedListError with exit code.
 */
-LinkedListError insert(LinkedList* list, size_t index, int value){
-    Node* tmp = list->head;
+LinkedListError getNodeAt(LinkedList* list, size_t index, Node* pointer){
+    Node* iterator = list->head;
 
-    if (index == 0){
-        return prepend(list, value);
+    if (iterator == NULL){
+        return INDEX_ERROR;
     }
 
-    for(int i = 1; i < index; i++){
-        
+    for (int i = 0; i < index; i++){
+        if (iterator->next == NULL){
+            return INDEX_ERROR;
+        }
+
+        iterator = iterator->next;
+    }
+
+    pointer = iterator;
+    return SUCCESS;
+}
+
+LinkedListError insert(LinkedList* list, size_t index, int value){
+    Node* iterator;
+
+    if (index == 0){
+        return addFirstNode(list, value);
+    }
+    
+    LinkedListError exit_value = getNodeAt(list, index - 1, iterator);
+
+    if (exit_value != SUCCESS){
+        return exit_value;
+    }
+
+    Node* tmp;
+    LinkedListError exit_value = initNode(tmp, value);
+
+    if (exit_value != SUCCESS){
+        return exit_value;
+    }
+
+    tmp->next = iterator->next;
+    iterator->next = tmp;
+
+    return SUCCESS;
+}
+
+/*
+Removes the first node of a list.
+
+@param list - list to remove node from.
+
+@return LinkedListError with exit code.
+*/
+LinkedListError removeFirstNode(LinkedList* list){
+    Node* tmp = list->head->next;
+
+    if (tmp == NULL){
+        return INDEX_ERROR;
+    }
+
+    free(list->head);
+    list->head = tmp;
+
+    return SUCCESS;
+}
+
+LinkedListError removeAt(LinkedList* list, size_t index){
+    Node* iterator;
+
+    if (index == 0){
+        return removeFirstNode(list);
+    }
+
+    LinkedListError exit_value = getNodeAt(list, index - 1, iterator);
+
+    if (exit_value != SUCCESS){
+        return exit_value;
+    }
+
+    Node* tmp = iterator->next;
+    free(iterator->next);
+    iterator->next = tmp;
+
+    return SUCCESS;
+}
+
+LinkedListError getAt(LinkedList* list, size_t index, int* value){
+    Node* tmp;
+    LinkedListError exit_value = getNodeAt(list, index, tmp);
+
+    if (exit_value != SUCCESS){
+        return exit_value;
+    }
+
+    *value = tmp->value;
+
+    return SUCCESS;
+}
+
+LinkedListError setAt(LinkedList* list, size_t index, int value){
+    Node* tmp;
+
+    LinkedListError exit_value = getNodeAt(list, index, tmp);
+
+    if (exit_value != SUCCESS){
+        return exit_value;
+    }
+
+    tmp->value = value;
+
+    return SUCCESS;
+}
+
+size_t len(LinkedList* list){
+    size_t size = 0;
+    Node* iterator = list->head;
+
+    while (iterator != NULL){
+        size++;
+        iterator = iterator->next;
+    }
+
+    return size;
+}
+
+void printList(LinkedList* list){
+    Node* iterator = list->head;
+
+    if (iterator == NULL){
+        printf("\n");
+    }
+    else{
+        while (iterator->next != NULL){
+            printf("%d %s ", iterator->value, CONNECTING_SIGN);
+        }
+        printf("%d\n", iterator->value);
     }
 }
 
