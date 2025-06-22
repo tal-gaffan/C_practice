@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #define CONNECTING_SIGN "->"
 
@@ -16,6 +17,7 @@ typedef enum {
     SUCCESS = 0,
     ALLOCATION_ERROR,
     INDEX_ERROR,
+    VALUE_NOT_FOUND
 } LinkedListError;
 
 /*
@@ -112,3 +114,33 @@ Prints the given list.
 @param list - given list.
 */
 void printList(LinkedList* list);
+
+/*
+Return the index of the given value in the given list. Returns the first occurence if multiple exist. 
+
+@param list - the given list. 
+@param value - the given value to find. 
+@param index - the pointer to place the index of the value at. 
+
+@return LinkedListError with exit code.
+*/
+LinkedListError indexOf(LinkedList* list, int value, size_t* index);
+
+/*
+Removes all occurences of given value from a given list. 
+
+@param list - the given list. 
+@param value - the given value. 
+
+@return LinkedListError with exit code.
+*/
+LinkedListError removeAll(LinkedList* list, int value);
+
+/*
+Sorts the given list inplace.
+
+@param list - the list to sort. 
+
+@return LinkedListError with exit code.
+*/
+LinkedListError sortList(LinkedList* list);

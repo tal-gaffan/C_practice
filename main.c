@@ -40,11 +40,21 @@ int main(){
     }
     printList(list);
 
-    // remove testa
+    // remove tests
     exit_value = removeAt(list, 5);
     printList(list);
 
     exit_value = removeAt(list, 11);
     printList(list);
     printf("%d\n", exit_value);
+
+    // indexOf test
+    size_t y;
+    exit_value = indexOf(list, 9, &y);
+    printf("%ld\n", y);
+
+    // RemoveAll test
+    exit_value = append(list, 12);
+    exit_value = removeAll(list, 12);
+    printList(list);
 }

@@ -157,6 +157,25 @@ LinkedListError removeFirstNode(LinkedList* list) {
     return SUCCESS;
 }
 
+/*
+Removes the node after the given node. 
+
+@param node - the node previous to the one to delete.
+
+@return LinkedListError with exit code.
+*/
+LinkedListError removeNextNode(Node* node){
+    if (node->next == NULL) {
+            return INDEX_ERROR;
+        }
+
+        Node* tmp = node->next->next;
+        free(node->next);
+        node->next = tmp;
+
+        return SUCCESS;
+}
+
 LinkedListError removeAt(LinkedList* list, size_t index) {
     Node* iterator;
 
@@ -170,15 +189,7 @@ LinkedListError removeAt(LinkedList* list, size_t index) {
         return exit_value;
     }
 
-    if (iterator->next == NULL) {
-        return INDEX_ERROR;
-    }
-
-    Node* tmp = iterator->next->next;
-    free(iterator->next);
-    iterator->next = tmp;
-
-    return SUCCESS;
+    return removeNextNode(iterator);    
 }
 
 LinkedListError getAt(LinkedList* list, size_t index, int* value) {
@@ -235,3 +246,98 @@ void printList(LinkedList* list) {
     }
 }
 
+LinkedListError indexOf(LinkedList* list, int value, size_t* index) {
+    Node* iterator = list->head;
+    size_t current_index = 0;
+
+    while (iterator != NULL){
+        if (iterator->value == value){
+            *index = current_index;
+            return SUCCESS;
+        }
+
+        current_index++;
+        iterator = iterator->next;
+    }
+
+    return VALUE_NOT_FOUND;
+}
+
+LinkedListError removeAll(LinkedList* list, int value){
+    Node* iterator = list->head;
+    LinkedListError exit_value;
+
+    if (iterator == NULL){
+        return SUCCESS;
+    }
+
+    if (iterator->value == value){
+        exit_value = removeFirstNode(list);
+
+        if (exit_value != SUCCESS){
+            return exit_value;
+        }
+    }
+
+    Node* previous = iterator;
+    iterator = iterator->next;
+
+    while (iterator != NULL){
+        if (iterator->value == value){
+            exit_value = removeNextNode(previous);
+            
+            if (exit_value != SUCCESS){
+                return exit_value;
+            }
+        }
+
+        previous = previous->next;
+        iterator = iterator->next;
+    }
+
+    return SUCCESS;
+}
+
+/*
+Swaps the values of the two given nodes.
+
+@param node1 - the first node to swap.
+@param node2 - the second node to swap.
+*/
+void swap(Node* node1, Node* node2){
+    int tmp = node1->value;
+    node1->value = node2->value;
+    node2->value = tmp;
+}
+
+LinkedListError sortList(LinkedList* list){
+    Node* current = list->head;
+    LinkedListError exit_value;
+    
+    if (current == NULL){
+        return SUCCESS;
+    }
+
+    Node* next = current->next;
+
+    if (next == NULL) {
+        return SUCCESS;
+    }
+
+    bool is_sorted = false;
+    while (!is_sorted){
+        is_sorted = true;
+
+        while (next != NULL){
+            if (current->value > next->value){
+                is_sorted = false;
+                swap(current, next);
+            }
+
+            current = current->next;
+            next = next->next;
+        }
+    }
+
+    return SUCCESS;
+}
