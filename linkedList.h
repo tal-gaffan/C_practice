@@ -1,13 +1,14 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #define CONNECTING_SIGN "->"
 
-typedef struct {
+typedef struct Node {
     int value;
-    Node* next;
+    struct Node* next;
 } Node;
 
-typedef struct {
+typedef struct LinkedList {
     Node* head;
 } LinkedList;
 
