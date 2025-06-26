@@ -1,10 +1,10 @@
 #include "dynamicArray.h"
 
-DynamicArrayError initArray(DynamicArray* arr){
+DynamicArrayError initArray(DynamicArray* arr) {
     arr->head = (int*) calloc(INIT_SIZE, sizeof(int));
 
-    if (!arr->head){
-        return INIT_ERROR;
+    if (!arr->head) {
+        return ALLOCATION_ERROR;
     }
 
     arr->current_size = 0;
@@ -13,17 +13,24 @@ DynamicArrayError initArray(DynamicArray* arr){
     return SUCCESS;
 }
 
-void freeArray(DynamicArray* arr){
+void freeArray(DynamicArray* arr) {
     free(arr->head);
     free(arr);
 }
 
-DynamicArrayError expandArray(DynamicArray* arr){
+/*
+Expand the given array by factor of the defined EXPAND_COEFFICIENT.
+
+@param arr - the array to expand. 
+
+@return DynamicArrayError enum with exit code.
+*/
+DynamicArrayError expandArray(DynamicArray* arr) {
     size_t new_max_capacity = EXPAND_COEFFICIENT * arr->max_capacity;
     int* tmp = (int*) realloc(arr->head, new_max_capacity * sizeof(int));
 
-    if (!tmp){
-        return EXPAND_ERROR;
+    if (!tmp) {
+        return ALLOCATION_ERROR;
     }
 
     arr->head = tmp;
@@ -32,11 +39,11 @@ DynamicArrayError expandArray(DynamicArray* arr){
     return SUCCESS;
 }
 
-DynamicArrayError pushBack(DynamicArray* arr, int value){
-    if (arr->current_size == arr->max_capacity){
+DynamicArrayError pushBack(DynamicArray* arr, int value) {
+    if (arr->current_size == arr->max_capacity) {
         DynamicArrayError exit_value = expandArray(arr);
 
-        if (exit_value != SUCCESS){
+        if (exit_value != SUCCESS) {
             return exit_value;
         }
     }
@@ -47,12 +54,19 @@ DynamicArrayError pushBack(DynamicArray* arr, int value){
     return SUCCESS;
 }
 
-DynamicArrayError shrinkArray(DynamicArray* arr){
+/* 
+Shrink the given array by factor of the define EXPAND_COEFFICIENT. 
+
+@param arr - the array to shrink.
+
+@return DynamicArrayError enum with exit code.
+*/
+DynamicArrayError shrinkArray(DynamicArray* arr) {
     size_t new_max_capacity = arr->max_capacity / EXPAND_COEFFICIENT;
     int* tmp = (int*) realloc(arr->head, new_max_capacity * sizeof(int));
 
-    if (!tmp){
-        return SHRINK_ERROR;
+    if (!tmp) {
+        return ALLOCATION_ERROR;
     }
 
     arr->head = tmp;
@@ -61,11 +75,11 @@ DynamicArrayError shrinkArray(DynamicArray* arr){
     return SUCCESS;
 }
 
-DynamicArrayError popBack(DynamicArray* arr){
-    if (arr->current_size <= arr->max_capacity / EXPAND_COEFFICIENT){
+DynamicArrayError popBack(DynamicArray* arr) {
+    if (arr->current_size <= arr->max_capacity / EXPAND_COEFFICIENT) {
         DynamicArrayError exit_value = shrinkArray(arr);
 
-        if (exit_value != SUCCESS){
+        if (exit_value != SUCCESS) {
             return exit_value;
         }
     }
@@ -75,8 +89,8 @@ DynamicArrayError popBack(DynamicArray* arr){
     return SUCCESS;
 }
 
-DynamicArrayError getAt(DynamicArray* arr, size_t index, int* value){
-    if (index >= arr->current_size){
+DynamicArrayError getAt(DynamicArray* arr, size_t index, int* value) {
+    if (index >= arr->current_size) {
         return INDEX_ERROR;
     }
 
@@ -85,8 +99,8 @@ DynamicArrayError getAt(DynamicArray* arr, size_t index, int* value){
     return SUCCESS;
 }
 
-DynamicArrayError setAt(DynamicArray* arr, size_t index, int value){
-    if (index >= arr->current_size){
+DynamicArrayError setAt(DynamicArray* arr, size_t index, int value) {
+    if (index >= arr->current_size) {
         return INDEX_ERROR;
     }
 
@@ -95,9 +109,9 @@ DynamicArrayError setAt(DynamicArray* arr, size_t index, int value){
     return SUCCESS;
 }
 
-void printArray(const DynamicArray* arr){
-    for(int i = 0; i < arr->current_size; i++){
-        if (i == arr->current_size - 1){
+void printArray(const DynamicArray* arr) {
+    for(int i = 0; i < arr->current_size; i++) {
+        if (i == arr->current_size - 1) {
             printf("%d\n", arr->head[i]);
         }
         else{

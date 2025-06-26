@@ -6,10 +6,8 @@
 
 typedef enum {
     SUCCESS = 0,
-    INIT_ERROR,
-    EXPAND_ERROR,
-    SHRINK_ERROR,
-    INDEX_ERROR,
+    ALLOCATION_ERROR,
+    INDEX_ERROR
 } DynamicArrayError;
 
 typedef struct {
@@ -33,24 +31,6 @@ Free dynamic array.
 @param arr - the array to free. 
 */
 void freeArray(DynamicArray* arr);
-
-/*
-Expand the given array by factor of the defined EXPAND_COEFFICIENT.
-
-@param arr - the array to expand. 
-
-@return DynamicArrayError enum with exit code.
-*/
-DynamicArrayError expandArray(DynamicArray* arr);
-
-/* 
-Shrink the given array by factor of the define EXPAND_COEFFICIENT. 
-
-@param arr - the array to shrink.
-
-@return DynamicArrayError enum with exit code.
-*/
-DynamicArrayError shrinkArray(DynamicArray* arr);
 
 /* Push given value into the back of the given array. 
 
